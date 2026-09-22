@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --sk-crimson: #C62244;
+    --sk-navy: #10243F;
+    --sk-marigold: #E9A23B;
+    --sk-jade: #12795E;
+    --header-h: 4rem;
+  }
+
+  * { -webkit-tap-highlight-color: transparent; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    @apply bg-brick-50 text-navy-900 font-sans antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Devanagari copy needs a touch more line height to breathe. */
+  :lang(ne) { @apply font-ne leading-relaxed; }
+
+  h1, h2, h3, h4 { @apply font-display tracking-tight text-navy-900; text-wrap: balance; }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-crimson-600 ring-offset-2 ring-offset-brick-50 rounded-sm;
+  }
+
+  ::selection { @apply bg-marigold-200 text-navy-900; }
+
+  /* Tidier native controls inside our own field chrome. */
+  input[type='date'], input[type='number'], select { @apply appearance-none; }
+
+  /* appearance-none also removes the dropdown arrow, so draw it back on —
+     otherwise a select is indistinguishable from a text input. */
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23806655' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 9.5 7 7 7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    padding-right: 2.25rem;
+  }
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type='number'] { -moz-appearance: textfield; }
+}
+
+@layer components {
+  /* ---- Buttons ---------------------------------------------------- */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold
+           transition-all duration-150 select-none whitespace-nowrap
+           disabled:opacity-45 disabled:pointer-events-none active:translate-y-px;
+  }
+  .btn-lg { @apply px-5 py-3 text-[15px] rounded-2xl; }
+  .btn-sm { @apply px-3 py-1.5 text-[13px] rounded-lg gap-1.5; }
+
+  .btn-primary   { @apply btn bg-crimson-600 text-white shadow-inset hover:bg-crimson-700 shadow-card; }
+  .btn-navy      { @apply btn bg-navy-900 text-white shadow-inset hover:bg-navy-800 shadow-card; }
+  .btn-jade      { @apply btn bg-jade-600 text-white shadow-inset hover:bg-jade-700 shadow-card; }
+  .btn-marigold  { @apply btn bg-marigold-400 text-navy-950 shadow-inset hover:bg-marigold-500 shadow-card; }
+  .btn-outline   { @apply btn border border-brick-300 bg-white text-navy-800 hover:border-navy-400 hover:bg-brick-50; }
+  .btn-ghost     { @apply btn text-navy-700 hover:bg-brick-100; }
+
+  /* ---- Surfaces --------------------------------------------------- */
+  .card { @apply bg-white rounded-2xl border border-brick-200/80 shadow-card; }
+  .panel { @apply bg-white rounded-2xl border border-brick-200/80; }
+
+  /* ---- Form fields ------------------------------------------------ */
+  .field {
+    @apply w-full rounded-xl border border-brick-300 bg-white px-3.5 py-2.5 text-[15px] text-navy-900
+           placeholder:text-brick-500 transition
+           focus:border-crimson-500 focus:ring-2 focus:ring-crimson-500/20 focus:outline-none;
+  }
+  .field-err { @apply border-crimson-500 ring-2 ring-crimson-500/15; }
+  .label { @apply block text-[13px] font-semibold text-navy-800 mb-1.5; }
+  .hint  { @apply text-[12px] text-brick-600 mt-1.5 leading-snug; }
+  .err   { @apply text-[12px] font-medium text-crimson-700 mt-1.5 flex items-start gap-1; }
+
+  /* ---- Chips / badges --------------------------------------------- */
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[13px] font-medium
+           transition cursor-pointer select-none;
+  }
+  .chip-off { @apply chip border-brick-300 bg-white text-navy-700 hover:border-navy-400; }
+  .chip-on  { @apply chip border-navy-900 bg-navy-900 text-white; }
+
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide;
+  }
+
+  /* ---- Bits ------------------------------------------------------- */
+  .divider-dot::after { content: '·'; @apply mx-1.5 text-brick-400; }
+
+  .skeleton { @apply relative overflow-hidden bg-brick-200 rounded; }
+  .skeleton::after {
+    content: ''; @apply absolute inset-0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent);
+    animation: shimmer 1.4s infinite;
+  }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+
+  /* Fade the right edge of horizontally scrolling chip rows. */
+  .scroll-fade {
+    -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent 100%);
+    mask-image: linear-gradient(90deg, #000 88%, transparent 100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  .no-print { display: none !important; }
+}
