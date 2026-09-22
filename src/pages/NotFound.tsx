@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon } from '../components/Icon';
+import { Logo } from '../components/Icon';
 import { applyMeta } from '../lib/seo';
 
 export function NotFound() {
@@ -10,6 +11,7 @@ export function NotFound() {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-24 sm:py-32 text-center">
+      <Logo className="h-12 w-20 mx-auto mb-6 opacity-90" />
       <div className="font-display text-7xl font-bold text-brick-300 mb-4">404</div>
       <h1 className="text-2xl sm:text-3xl font-bold mb-3">We cannot find that page</h1>
       <p className="text-brick-700 text-[15.5px] leading-relaxed">

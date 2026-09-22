@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon } from '../components/Icon';
+import { Logo } from '../components/Icon';
 import { Badge, EmptyState, Modal, cx, useToast } from '../components/ui';
 import {
   DURATION_OPTIONS, daysLeft, displayStatus, expiryLine, statusToken, type DisplayStatus,
@@ -67,7 +68,8 @@ export function Admin() {
       {/* ---- header -------------------------------------------------- */}
       <div className="flex flex-wrap items-start justify-between gap-4 mb-7">
         <div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
+            <Logo className="h-9 w-14 shrink-0" />
             <h1 className="text-3xl font-bold">Manage listings</h1>
             <Badge tone="bg-navy-900 text-white">Admin</Badge>
           </div>

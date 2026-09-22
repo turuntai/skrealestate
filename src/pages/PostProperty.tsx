@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '../components/Icon';
+import { Logo } from '../components/Icon';
 import { Photo } from '../components/Photo';
 import { Badge, CheckChip, cx, useToast } from '../components/ui';
 import { DURATION_OPTIONS } from '../lib/expiry';
@@ -292,6 +293,7 @@ export function PostProperty() {
   return (
     <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8 sm:py-12">
       <div className="mb-8">
+        <Logo className="h-10 w-16 mb-4" />
         <Badge tone="bg-marigold-100 text-marigold-900 border border-marigold-300" icon="clock">
           Most owners finish this in under 3 minutes
         </Badge>

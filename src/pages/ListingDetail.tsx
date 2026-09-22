@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ActionRow, ContactButtons, VisitModal } from '../components/ContactActions';
 import { Gallery } from '../components/Gallery';
-import { Icon, type IconName } from '../components/Icon';
+import { Icon, Logo, type IconName } from '../components/Icon';
 
 import { MapPin } from '../components/MapPin';
 import { Badge, SectionHeading, Spec, cx } from '../components/ui';
@@ -42,10 +42,6 @@ export function ListingDetail() {
   useEffect(() => {
     if (listing) applyMeta(listingMeta(listing));
   }, [listing]);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [slug]);
 
   // The sticky mobile contact bar appears once the price block scrolls away.
   useEffect(() => {
@@ -355,6 +351,7 @@ export function ListingDetail() {
 
 function PriceCard({ listing: l, onVisit }: { listing: Listing; onVisit: () => void }) {
   const { t } = useLang();
+  const isOurDesk = /^SK Real Estate/i.test(l.contactName.trim());
   const status = displayStatus(l);
   const unavailable = status === 'rented' || status === 'expired';
   const total = monthlyTotal(l);
@@ -422,9 +419,16 @@ function PriceCard({ listing: l, onVisit }: { listing: Listing; onVisit: () => v
       )}
 
       <div className="mt-5 pt-4 border-t border-brick-200 flex items-center gap-3">
-        <span className="w-10 h-10 rounded-full bg-navy-900 text-white grid place-items-center font-bold text-[15px] shrink-0">
-          {l.contactName.trim()[0]?.toUpperCase()}
-        </span>
+        {/* Listings handled by our own desk carry the mark rather than an initial. */}
+        {isOurDesk ? (
+          <span className="w-10 h-10 rounded-lg bg-white border border-brick-200 grid place-items-center shrink-0 p-1">
+            <Logo className="w-full h-full" />
+          </span>
+        ) : (
+          <span className="w-10 h-10 rounded-full bg-navy-900 text-white grid place-items-center font-bold text-[15px] shrink-0">
+            {l.contactName.trim()[0]?.toUpperCase()}
+          </span>
+        )}
         <div className="min-w-0">
           <div className="font-semibold text-[14.5px] flex items-center gap-1.5">
             {l.contactName}

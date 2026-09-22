@@ -356,4 +356,12 @@ export const SEED_LISTINGS: Listing[] = [
   },
 ];
 
-export const SEED_VERSION = 1;
+/**
+ * Bump whenever SEED_LISTINGS changes shape or content, so a returning visitor
+ * does not keep serving a stale copy out of localStorage.
+ *
+ * 2 — photos moved from bundled files to the random-image endpoint. Browsers
+ *     holding v1 were still pointing at deleted /media/*.svg paths, which 404'd
+ *     into the placeholder and made every listing look identical.
+ */
+export const SEED_VERSION = 2;

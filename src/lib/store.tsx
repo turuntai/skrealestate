@@ -36,15 +36,18 @@ const StoreContext = createContext<Store | null>(null);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [listings, setListings] = useState<Listing[]>(() => {
-    // Re-seed when the bundled catalogue is newer than what's in the browser,
-    // so a deploy with new demo data isn't masked by a stale localStorage copy.
     const storedVersion = read<number>(KEYS.seedVersion, 0);
-    if (storedVersion !== SEED_VERSION) {
-      write(KEYS.listings, SEED_LISTINGS);
-      write(KEYS.seedVersion, SEED_VERSION);
-      return SEED_LISTINGS;
-    }
-    return read<Listing[]>(KEYS.listings, SEED_LISTINGS);
+    if (storedVersion === SEED_VERSION) return read<Listing[]>(KEYS.listings, SEED_LISTINGS);
+
+    // The bundled catalogue changed, so the copy in this browser is stale —
+    // refresh it, but keep anything the visitor posted themselves rather than
+    // wiping their work along with the demo data.
+    const seedIds = new Set(SEED_LISTINGS.map((l) => l.id));
+    const ownListings = read<Listing[]>(KEYS.listings, []).filter((l) => !seedIds.has(l.id));
+    const merged = [...ownListings, ...SEED_LISTINGS];
+    write(KEYS.listings, merged);
+    write(KEYS.seedVersion, SEED_VERSION);
+    return merged;
   });
 
   const [saved, setSaved] = useState<string[]>(() => read<string[]>(KEYS.saved, []));

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon } from '../components/Icon';
+import { LogoLockup } from '../components/Icon';
 import { Badge, SectionHeading } from '../components/ui';
 import { applyMeta } from '../lib/seo';
 import { CITIES } from '../lib/taxonomy';
@@ -45,7 +46,12 @@ export function About() {
       <section className="bg-navy-900 text-white relative overflow-hidden">
         <div className="absolute -top-32 -right-24 w-[30rem] h-[30rem] rounded-full bg-crimson-600/20 blur-3xl" aria-hidden="true" />
         <div className="relative mx-auto max-w-4xl px-4 sm:px-6 py-16 sm:py-24">
-          <Badge tone="bg-white/12 text-marigold-200 border border-white/15">Since 2020</Badge>
+          <div className="inline-flex bg-white rounded-2xl px-5 py-4 mb-6 shadow-lift">
+            <LogoLockup className="h-14" />
+          </div>
+          <div>
+            <Badge tone="bg-white/12 text-marigold-200 border border-white/15">Since 2020</Badge>
+          </div>
           <h1 className="text-4xl sm:text-5xl font-bold text-white mt-5 leading-tight">
             Renting in Kathmandu should not be this hard
           </h1>

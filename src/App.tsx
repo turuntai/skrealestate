@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { Icon } from './components/Icon';
+import { ScrollToTop } from './components/ScrollToTop';
 import { About } from './pages/About';
 import { Admin } from './pages/Admin';
 import { Contact } from './pages/Contact';
@@ -48,6 +49,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | 
 export default function App() {
   return (
     <div className="min-h-screen flex flex-col">
+      <ScrollToTop />
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-3 focus:left-3 focus:btn-primary"

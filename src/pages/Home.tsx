@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ListingCard } from '../components/ListingCard';
-import { Icon } from '../components/Icon';
+import { Icon, LogoLockup } from '../components/Icon';
 import { Photo } from '../components/Photo';
 import { Badge, SectionHeading, cx } from '../components/ui';
 import { isLive } from '../lib/expiry';
@@ -320,6 +320,9 @@ export function Home() {
           <div className="absolute -left-16 -bottom-24 w-72 h-72 rounded-full bg-jade-600/20 blur-3xl" aria-hidden="true" />
           <div className="relative grid lg:grid-cols-[1.4fr_1fr] gap-10 items-center">
             <div>
+              <div className="inline-flex bg-white rounded-xl px-4 py-3 mb-5 shadow-card">
+                <LogoLockup className="h-10" />
+              </div>
               <h2 className="text-3xl sm:text-4xl font-bold text-white">Have a place to rent out?</h2>
               <p className="mt-4 text-navy-100 text-[16px] leading-relaxed max-w-xl">
                 Put it up in under three minutes. Add your photos, the rent and what it

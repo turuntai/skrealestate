@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Icon } from '../components/Icon';
+import { LogoLockup } from '../components/Icon';
 import { cx, useToast } from '../components/ui';
 import { applyMeta } from '../lib/seo';
 import { whatsappHref } from '../lib/share';
@@ -139,6 +140,7 @@ export function Contact() {
         {/* ---- office card ------------------------------------------ */}
         <aside className="space-y-4">
           <div className="card p-6">
+            <LogoLockup className="h-11 mb-5" />
             <h2 className="font-bold text-lg mb-4">Our office</h2>
             <ul className="space-y-4 text-[14.5px]">
               <li className="flex gap-3">
