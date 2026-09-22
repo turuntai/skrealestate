@@ -9,6 +9,7 @@ import { REPORT_REASONS, VISIT_SLOTS } from '../lib/taxonomy';
 import type { Listing } from '../lib/types';
 import { Icon } from './Icon';
 import { Modal, useToast, cx } from './ui';
+import { Photo } from './Photo';
 
 /* ==================== Call / WhatsApp / Viber ======================== */
 
@@ -95,7 +96,7 @@ export function VisitModal({ listing: l, open, onClose }: { listing: Listing; op
       }
     >
       <div className="flex gap-3 p-3 rounded-xl bg-brick-50 border border-brick-200 mb-5">
-        <img src={l.photos[0]?.src} alt="" className="w-16 h-14 rounded-lg object-cover shrink-0" />
+        <Photo src={l.photos[0]?.src} alt="" className="w-16 h-14 rounded-lg object-cover shrink-0" />
         <div className="min-w-0">
           <div className="font-semibold text-[14.5px] line-clamp-1">{l.title}</div>
           <div className="text-[13px] text-brick-700">{l.area}, {l.city}</div>
@@ -240,7 +241,7 @@ export function ShareModal({ listing: l, open, onClose }: { listing: Listing; op
   return (
     <Modal open={open} onClose={onClose} title="Share this property" size="sm">
       <div className="flex gap-3 p-3 rounded-xl bg-brick-50 border border-brick-200 mb-5">
-        <img src={l.photos[0]?.src} alt="" className="w-20 h-16 rounded-lg object-cover shrink-0" />
+        <Photo src={l.photos[0]?.src} alt="" className="w-20 h-16 rounded-lg object-cover shrink-0" />
         <div className="min-w-0">
           <div className="font-semibold text-[14.5px] line-clamp-2 leading-snug">{l.title}</div>
           <div className="text-[13px] text-brick-700 mt-0.5">{l.area}, {l.city}</div>

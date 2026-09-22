@@ -50,7 +50,7 @@ export function Header() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="h-16 flex items-center gap-3 sm:gap-5">
             <Link to="/" className="flex items-center gap-2.5 shrink-0" aria-label="SK Real Estate home">
-              <Logo className="w-9 h-9 sm:w-10 sm:h-10" />
+              <Logo className="h-8 w-12 sm:h-9 sm:w-14" />
               <span className="leading-none">
                 <span className="block font-display font-bold text-[15px] sm:text-[17px] text-navy-900 whitespace-nowrap">SK Real Estate</span>
                 <span className="hidden sm:block text-[10px] tracking-[0.18em] text-brick-600 font-semibold mt-0.5">

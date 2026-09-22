@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
 import { CITIES, POPULAR_AREAS } from '../lib/taxonomy';
-import { Icon, Logo } from './Icon';
+import { Icon, LogoLockup } from './Icon';
 
 const OFFICE = {
   line1: 'Kupondole Height, Ward 10',
   line2: 'Lalitpur, Bagmati Province, Nepal',
   phone: '01-5520987',
-  mobile: '9802223344',
+  mobile: '9851410559',
   email: 'info@skrealestate.com.np',
   hours: 'Sunday – Friday, 10 AM – 6 PM',
 };
@@ -23,12 +23,13 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           {/* ---- brand ------------------------------------------- */}
           <div>
-            <div className="flex items-center gap-2.5 mb-4">
-              <Logo className="w-11 h-11" />
-              <div>
-                <div className="font-display font-bold text-lg text-white leading-tight">SK Real Estate</div>
-                <div className="text-[10px] tracking-[0.18em] text-marigold-300 font-semibold">PVT. LTD.</div>
-              </div>
+            {/* The mark's navy would disappear against this footer, so the
+                full lockup sits on a white tile instead of being inverted. */}
+            <div className="inline-flex bg-white rounded-2xl px-4 py-3 mb-4 shadow-card">
+              <LogoLockup className="h-12" />
+            </div>
+            <div className="text-[10px] tracking-[0.18em] text-marigold-300 font-semibold mb-3">
+              PVT. LTD. · EST. 2020
             </div>
             <p className="text-[14px] leading-relaxed text-navy-200">
               Houses, flats and land across Kathmandu Valley — listed by owners and
@@ -108,7 +109,7 @@ export function Footer() {
                 <span>
                   <a href={`tel:+977${OFFICE.mobile}`} className="hover:text-marigold-300">{OFFICE.mobile}</a>
                   <span className="text-navy-400"> · </span>
-                  <a href="tel:+9771552 0987" className="hover:text-marigold-300">{OFFICE.phone}</a>
+                  <a href="tel:+97715520987" className="hover:text-marigold-300">{OFFICE.phone}</a>
                 </span>
               </li>
               <li className="flex gap-2.5">

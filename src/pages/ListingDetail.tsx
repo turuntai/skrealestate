@@ -18,6 +18,7 @@ import {
   AMENITY_MAP, FURNISHING, PROPERTY_TYPE, PURPOSE, ROAD, WATER,
 } from '../lib/taxonomy';
 import type { Listing } from '../lib/types';
+import { Photo } from '../components/Photo';
 
 export function ListingDetail() {
   const { slug = '' } = useParams();
@@ -280,7 +281,7 @@ export function ListingDetail() {
                       className="card overflow-hidden group hover:shadow-lift hover:-translate-y-0.5 transition-all"
                     >
                       <div className="aspect-[4/3] bg-brick-200 overflow-hidden">
-                        <img
+                        <Photo
                           src={s.photos[0]?.src}
                           alt={s.photos[0]?.alt ?? ''}
                           loading="lazy"

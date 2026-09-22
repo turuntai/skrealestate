@@ -113,14 +113,34 @@ export function Icon({ name, className = 'w-5 h-5', filled = false, strokeWidth 
   );
 }
 
-/** The SK monogram — a roofline over the company initials. */
+/**
+ * The company mark (the buildings), for use on light surfaces.
+ * The artwork's dark navy disappears on a dark background, so on the footer
+ * it sits on a white tile rather than being inverted — see `LogoLockup`.
+ */
 export function Logo({ className = 'w-10 h-10' }: { className?: string }) {
   return (
-    <svg viewBox="0 0 48 48" className={className} aria-hidden="true" focusable="false">
-      <rect width="48" height="48" rx="12" fill="#C62244" />
-      <path d="M10 26 24 13l14 13" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M14 25.5V36h20V25.5" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
-      <rect x="21" y="29" width="6" height="7" rx="1" fill="#E9A23B" />
-    </svg>
+    <img
+      src="/brand/logo-mark.png"
+      alt=""
+      className={`${className} object-contain`}
+      width={769}
+      height={512}
+      decoding="async"
+    />
+  );
+}
+
+/** Full lockup — mark plus the "SK Real Estate" wordmark. */
+export function LogoLockup({ className = 'h-12' }: { className?: string }) {
+  return (
+    <img
+      src="/brand/logo-full.png"
+      alt="SK Real Estate Pvt. Ltd."
+      className={`${className} w-auto object-contain`}
+      width={877}
+      height={512}
+      decoding="async"
+    />
   );
 }

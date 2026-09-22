@@ -2,9 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ListingCard } from '../components/ListingCard';
 import { Icon } from '../components/Icon';
+import { Photo } from '../components/Photo';
 import { Badge, SectionHeading, cx } from '../components/ui';
 import { isLive } from '../lib/expiry';
 import { npr } from '../lib/format';
+import { photoUrl } from '../lib/photos';
 import { applyMeta, SITE_NAME, SITE_TAGLINE } from '../lib/seo';
 import { useStore } from '../lib/store';
 import { CITIES, POPULAR_AREAS, PROPERTY_TYPE } from '../lib/taxonomy';
@@ -188,7 +190,7 @@ export function Home() {
           {/* Decorative composition — only where there is room for it. */}
           <div className="hidden xl:block relative h-[34rem]" aria-hidden="true">
             <div className="absolute left-0 top-2 w-[13rem] rounded-2xl overflow-hidden shadow-lift rotate-[-5deg] bg-white">
-              <img src="/media/facade-2.svg" alt="" className="w-full aspect-[4/3] object-cover" />
+              <Photo src={photoUrl('exterior', 'hero-a')} alt="" className="w-full aspect-[4/3] object-cover" />
               <div className="px-3.5 py-3">
                 <div className="font-bold text-navy-900 text-[16px]">Rs 85,000<span className="text-[11.5px] text-brick-600 font-medium">/mo</span></div>
                 <div className="text-[12px] text-brick-700 mt-0.5">3 BHK house · Baluwatar</div>
@@ -196,7 +198,7 @@ export function Home() {
             </div>
 
             <div className="absolute right-0 top-[15rem] w-[13rem] rounded-2xl overflow-hidden shadow-lift rotate-[4deg] bg-white">
-              <img src="/media/terrace-1.svg" alt="" className="w-full aspect-[4/3] object-cover" />
+              <Photo src={photoUrl('terrace', 'hero-b')} alt="" className="w-full aspect-[4/3] object-cover" />
               <div className="px-3.5 py-3">
                 <div className="font-bold text-navy-900 text-[16px]">Rs 38,000<span className="text-[11.5px] text-brick-600 font-medium">/mo</span></div>
                 <div className="text-[12px] text-brick-700 mt-0.5">2 BHK flat · Jhamsikhel</div>

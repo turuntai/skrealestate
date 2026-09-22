@@ -5,7 +5,7 @@ import { applyMeta } from '../lib/seo';
 import { whatsappHref } from '../lib/share';
 import { CITIES } from '../lib/taxonomy';
 
-const OFFICE_PHONE = '9802223344';
+const OFFICE_PHONE = '9851410559';
 
 export function Contact() {
   const toast = useToast();

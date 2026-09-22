@@ -10,6 +10,7 @@ import { applyMeta } from '../lib/seo';
 import { useStore } from '../lib/store';
 import { PROPERTY_TYPE, STATUS } from '../lib/taxonomy';
 import type { Listing } from '../lib/types';
+import { Photo } from '../components/Photo';
 
 type Tab = 'all' | 'active' | 'expiring' | 'rented' | 'expired';
 
@@ -162,7 +163,7 @@ export function Admin() {
                 <li key={l.id} className="grid lg:grid-cols-[1fr_8rem_9.5rem_7rem_15rem] gap-4 px-4 sm:px-5 py-4 items-center hover:bg-brick-50 transition-colors">
                   {/* property */}
                   <div className="flex gap-3 min-w-0">
-                    <img
+                    <Photo
                       src={l.photos[0]?.src} alt=""
                       className={cx('w-16 h-14 rounded-lg object-cover shrink-0 bg-brick-200', status !== 'active' && status !== 'expiring' && 'grayscale opacity-70')}
                       loading="lazy"

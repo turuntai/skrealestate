@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '../components/Icon';
+import { Photo } from '../components/Photo';
 import { Badge, CheckChip, cx, useToast } from '../components/ui';
 import { DURATION_OPTIONS } from '../lib/expiry';
 import { npr, slugify, toISODate } from '../lib/format';
 import { applyMeta } from '../lib/seo';
+import { photoAlt, photoUrl, type PhotoKind } from '../lib/photos';
 import { uid } from '../lib/storage';
 import { useStore } from '../lib/store';
 import {
@@ -14,16 +16,20 @@ import type {
   Bhk, Furnishing, Listing, Media, PropertyType, Purpose, RoadAccess, WaterSource,
 } from '../lib/types';
 
-/* Stock imagery offered as a fallback for owners who have no photos to hand. */
-const STOCK: { src: string; alt: string; label: string }[] = [
-  { src: '/media/facade-1.svg', alt: 'Front of the building', label: 'Facade' },
-  { src: '/media/living-1.svg', alt: 'Living room', label: 'Living' },
-  { src: '/media/bedroom-1.svg', alt: 'Bedroom', label: 'Bedroom' },
-  { src: '/media/kitchen-1.svg', alt: 'Kitchen', label: 'Kitchen' },
-  { src: '/media/bath-1.svg', alt: 'Bathroom', label: 'Bathroom' },
-  { src: '/media/terrace-1.svg', alt: 'Terrace', label: 'Terrace' },
-  { src: '/media/street-1.svg', alt: 'Road access', label: 'Road' },
-  { src: '/media/plan-1.svg', alt: 'Floor plan', label: 'Floor plan' },
+/**
+ * Offered to owners who have no photos to hand. Each entry pulls a random
+ * photo of that kind, so the placeholder at least matches the room it stands in
+ * for. They are still placeholders — the form says so.
+ */
+const STOCK: { kind: PhotoKind; label: string }[] = [
+  { kind: 'exterior', label: 'Exterior' },
+  { kind: 'living', label: 'Living' },
+  { kind: 'bedroom', label: 'Bedroom' },
+  { kind: 'kitchen', label: 'Kitchen' },
+  { kind: 'bathroom', label: 'Bathroom' },
+  { kind: 'terrace', label: 'Terrace' },
+  { kind: 'street', label: 'Road' },
+  { kind: 'plan', label: 'Floor plan' },
 ];
 
 const STEPS = [
@@ -184,12 +190,19 @@ export function PostProperty() {
     });
   };
 
-  const toggleStock = (s: { src: string; alt: string }) => {
-    setD((p) =>
-      p.photos.some((x) => x.src === s.src)
-        ? { ...p, photos: p.photos.filter((x) => x.src !== s.src) }
-        : p.photos.length >= 10 ? p : { ...p, photos: [...p.photos, s] },
-    );
+  const toggleStock = (kind: PhotoKind) => {
+    setD((p) => {
+      const existing = p.photos.find((x) => x.src.includes(`sig=stock-${kind}`));
+      if (existing) return { ...p, photos: p.photos.filter((x) => x !== existing) };
+      if (p.photos.length >= 10) return p;
+      return {
+        ...p,
+        photos: [...p.photos, {
+          src: photoUrl(kind, `stock-${kind}`),
+          alt: photoAlt(kind, p.title || 'Property'),
+        }],
+      };
+    });
   };
 
   const movePhoto = (i: number, dir: -1 | 1) => {
@@ -216,7 +229,7 @@ export function PostProperty() {
 
     const photos = d.photos.length
       ? d.photos
-      : [{ src: '/media/facade-1.svg', alt: `${d.title} — exterior` }];
+      : [{ src: photoUrl('exterior', `${slug}-1`), alt: photoAlt('exterior', d.title.trim()) }];
 
     const listing: Listing = {
       id: uid('sk'),
@@ -672,7 +685,7 @@ export function PostProperty() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {d.photos.map((p, i) => (
                     <div key={p.src + i} className="relative group aspect-[4/3] rounded-xl overflow-hidden bg-brick-200 border border-brick-200">
-                      <img src={p.src} alt={p.alt} className="w-full h-full object-cover" />
+                      <Photo src={p.src} alt={p.alt} className="w-full h-full object-cover" />
                       {i === 0 && (
                         <span className="absolute top-2 left-2 badge bg-crimson-600 text-white">Cover</span>
                       )}
@@ -700,10 +713,10 @@ export function PostProperty() {
               <span className="label">No photos to hand? Pick placeholders for now</span>
               <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
                 {STOCK.map((s) => {
-                  const on = d.photos.some((p) => p.src === s.src);
+                  const on = d.photos.some((p) => p.src.includes(`sig=stock-${s.kind}`));
                   return (
                     <button
-                      key={s.src} type="button" onClick={() => toggleStock(s)}
+                      key={s.kind} type="button" onClick={() => toggleStock(s.kind)}
                       className={cx(
                         'aspect-square rounded-lg overflow-hidden border-2 relative transition-all',
                         on ? 'border-crimson-600 ring-2 ring-crimson-200' : 'border-brick-200 hover:border-brick-400',
@@ -711,7 +724,7 @@ export function PostProperty() {
                       aria-pressed={on}
                       title={s.label}
                     >
-                      <img src={s.src} alt={s.label} className="w-full h-full object-cover" loading="lazy" />
+                      <Photo src={photoUrl(s.kind, `stock-${s.kind}`)} alt={s.label} className="w-full h-full object-cover" loading="lazy" />
                       {on && (
                         <span className="absolute inset-0 bg-crimson-600/25 grid place-items-center">
                           <span className="w-5 h-5 rounded-full bg-crimson-600 text-white grid place-items-center">

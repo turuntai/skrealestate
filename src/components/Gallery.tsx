@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import type { Media } from '../lib/types';
 import { Icon } from './Icon';
 import { cx } from './ui';
+import { Photo } from './Photo';
 
 interface Props {
   photos: Media[];
@@ -74,7 +75,7 @@ export function Gallery({ photos, video, title }: Props) {
               className="snap-center shrink-0 w-full aspect-[4/3] bg-brick-200 relative"
               aria-label={`Open photo ${i + 1} of ${slides.length}`}
             >
-              <img src={s.media.src} alt={s.media.alt} className="w-full h-full object-cover" loading={i === 0 ? 'eager' : 'lazy'} />
+              <Photo src={s.media.src} alt={s.media.alt} className="w-full h-full object-cover" loading={i === 0 ? 'eager' : 'lazy'} />
               {s.kind === 'video' && <PlayOverlay />}
             </button>
           ))}
@@ -93,13 +94,13 @@ export function Gallery({ photos, video, title }: Props) {
           className={cx('relative bg-brick-200 group', tiles.length ? 'col-span-2 row-span-2' : 'col-span-4 row-span-2')}
           aria-label="Open photo 1"
         >
-          <img src={hero.media.src} alt={hero.media.alt} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+          <Photo src={hero.media.src} alt={hero.media.alt} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
           {hero.kind === 'video' && <PlayOverlay />}
         </button>
 
         {tiles.map((s, i) => (
           <button key={i} onClick={() => open(i + 1)} className="relative bg-brick-200 group" aria-label={`Open photo ${i + 2}`}>
-            <img src={s.media.src} alt={s.media.alt} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
+            <Photo src={s.media.src} alt={s.media.alt} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
             {s.kind === 'video' && <PlayOverlay small />}
             {i === tiles.length - 1 && extra > 0 && (
               <span className="absolute inset-0 bg-navy-950/60 grid place-items-center text-white font-bold text-lg">
@@ -129,7 +130,7 @@ export function Gallery({ photos, video, title }: Props) {
             </div>
 
             <div className="grow relative grid place-items-center px-2 sm:px-16 pb-4 min-h-0">
-              <img
+              <Photo
                 src={slides[lightbox].media.src}
                 alt={slides[lightbox].media.alt}
                 className="max-w-full max-h-full object-contain rounded-lg"
@@ -155,7 +156,7 @@ export function Gallery({ photos, video, title }: Props) {
                     )}
                     aria-label={`Go to photo ${i + 1}`}
                   >
-                    <img src={s.media.src} alt="" className="w-full h-full object-cover" loading="lazy" />
+                    <Photo src={s.media.src} alt="" className="w-full h-full object-cover" loading="lazy" />
                   </button>
                 ))}
               </div>

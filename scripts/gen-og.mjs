@@ -1,12 +1,15 @@
 /**
  * Builds a 1200x630 PNG share card for every listing.
  *
- * Facebook, Messenger and WhatsApp will not render an SVG in a link preview —
- * they need a raster image. This composites each listing's cover scene with a
- * branded band carrying the price, title and location, so a link pasted into a
- * Facebook group reads as an advert rather than a bare URL.
+ * Facebook, Messenger and WhatsApp will not render an SVG in a link preview,
+ * so these are raster. They are also brand-led rather than photo-led: listing
+ * photos now come from a third-party random-image endpoint at render time, so
+ * there is no local photo to composite and fetching one at build time would
+ * make the build depend on a service we do not control. A branded card always
+ * renders, and always carries the price and location — which is what makes
+ * someone tap the link in a Facebook group.
  *
- *   node scripts/gen-og.mjs        (run by `npm run build` before Vite)
+ *   node scripts/gen-og.mjs        (run by `npm run build`)
  */
 import { build } from 'esbuild';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -17,13 +20,13 @@ import sharp from 'sharp';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = resolve(ROOT, 'public/og');
 const TMP = resolve(ROOT, 'node_modules/.cache/sk-og');
+const LOGO = resolve(ROOT, 'public/brand/logo-full.png');
 
 const W = 1200, H = 630;
-const BAND = 210; // height of the dark info band along the bottom
 
 mkdirSync(OUT, { recursive: true });
 
-/* ---- shared formatting (mirrors src/lib/format.ts) ------------------ */
+/* ---- formatting (mirrors src/lib/format.ts) ------------------------- */
 const groupIndian = (n) => {
   const int = Math.abs(Math.round(n)).toString();
   const last3 = int.slice(-3);
@@ -43,18 +46,16 @@ const nprShort = (n) => {
   return npr(n);
 };
 
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-/** Naive width estimate is enough to keep the headline on two lines. */
-function truncate(text, maxChars) {
-  return text.length <= maxChars ? text : `${text.slice(0, maxChars - 1).trimEnd()}…`;
-}
+const truncate = (t, max) => (t.length <= max ? t : `${t.slice(0, max - 1).trimEnd()}…`);
 
 const TYPE_LABEL = {
   house: 'House', flat: 'Flat', room: 'Room', shutter: 'Shutter', office: 'Office', land: 'Land',
 };
 
-function overlay(l) {
+function card(l) {
   const price = l.purpose === 'rent' ? npr(l.price) : nprShort(l.price);
   const unit = l.purpose === 'rent' ? '/month' : '';
   const tags = [
@@ -66,59 +67,57 @@ function overlay(l) {
 
   const badge = l.purpose === 'rent' ? 'FOR RENT' : 'FOR SALE';
   const badgeFill = l.purpose === 'rent' ? '#245785' : '#12795E';
-  const badgeW = badge.length * 11 + 28;
+  const badgeW = badge.length * 11 + 30;
 
   return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
   <defs>
-    <linearGradient id="scrim" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#0A1729" stop-opacity="0"/>
-      <stop offset=".45" stop-color="#0A1729" stop-opacity=".72"/>
-      <stop offset="1" stop-color="#0A1729" stop-opacity=".97"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#10243F"/><stop offset="1" stop-color="#1D466C"/>
     </linearGradient>
+    <radialGradient id="crimson" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#C62244" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#C62244" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gold" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#E9A23B" stop-opacity=".4"/>
+      <stop offset="1" stop-color="#E9A23B" stop-opacity="0"/>
+    </radialGradient>
   </defs>
 
-  <!-- The scene behind can be any brightness, so the band has to carry the
-       contrast on its own rather than relying on the photo being dark. -->
-  <rect y="${H - BAND - 170}" width="${W}" height="${BAND + 170}" fill="url(#scrim)"/>
+  <rect width="${W}" height="${H}" fill="url(#bg)"/>
+  <circle cx="1040" cy="90" r="300" fill="url(#crimson)"/>
+  <circle cx="120" cy="600" r="280" fill="url(#gold)"/>
 
-  <!-- top-left status chips -->
-  <g transform="translate(44,42)">
-    <rect width="${badgeW}" height="38" rx="8" fill="${badgeFill}"/>
-    <text x="${badgeW / 2}" y="25" text-anchor="middle" font-family="Helvetica,Arial,sans-serif"
-          font-size="15" font-weight="bold" fill="#fff" letter-spacing="1.4">${badge}</text>
-    ${l.verified ? `<g transform="translate(${badgeW + 12},0)">
-      <rect width="118" height="38" rx="8" fill="#12795E"/>
-      <text x="59" y="25" text-anchor="middle" font-family="Helvetica,Arial,sans-serif"
-            font-size="15" font-weight="bold" fill="#fff" letter-spacing="1.2">VERIFIED</text>
+  <!-- white tile for the logo: the mark's navy would vanish on this background -->
+  <rect x="832" y="40" width="326" height="118" rx="18" fill="#FFFFFF"/>
+
+  <g transform="translate(56,48)">
+    <rect width="${badgeW}" height="40" rx="9" fill="${badgeFill}"/>
+    <text x="${badgeW / 2}" y="26" text-anchor="middle" font-family="Helvetica,Arial,sans-serif"
+          font-size="16" font-weight="bold" fill="#fff" letter-spacing="1.5">${badge}</text>
+    ${l.verified ? `<g transform="translate(${badgeW + 14},0)">
+      <rect width="128" height="40" rx="9" fill="#12795E"/>
+      <text x="64" y="26" text-anchor="middle" font-family="Helvetica,Arial,sans-serif"
+            font-size="16" font-weight="bold" fill="#fff" letter-spacing="1.3">VERIFIED</text>
     </g>` : ''}
   </g>
 
-  <!-- brand mark, top right -->
-  <g transform="translate(${W - 268},40)">
-    <rect width="44" height="44" rx="11" fill="#C62244"/>
-    <path d="M10 25 L22 13 L34 25" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M13.5 24.5 V34 H30.5 V24.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="56" y="21" font-family="Georgia,serif" font-size="20" fill="#fff">SK Real Estate</text>
-    <text x="56" y="39" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#E9A23B" letter-spacing="2.2">PVT. LTD.</text>
-  </g>
+  <g transform="translate(56,300)">
+    <text x="0" y="52" font-family="Helvetica,Arial,sans-serif" font-size="66" font-weight="bold" fill="#ffffff">${esc(price)}</text>
+    <text x="${price.length * 37 + 16}" y="52" font-family="Helvetica,Arial,sans-serif" font-size="26" fill="#C1D5E7">${unit}</text>
 
-  <!-- info band -->
-  <g transform="translate(48,${H - BAND + 6})">
-    <text x="0" y="46" font-family="Helvetica,Arial,sans-serif" font-size="46" font-weight="bold" fill="#ffffff">${esc(price)}</text>
-    <text x="${price.length * 26 + 14}" y="46" font-family="Helvetica,Arial,sans-serif" font-size="22" fill="#C1D5E7">${unit}</text>
+    <text x="0" y="118" font-family="Georgia,serif" font-size="36" fill="#ffffff">${esc(truncate(l.title, 52))}</text>
 
-    <text x="0" y="96" font-family="Georgia,serif" font-size="31" fill="#ffffff">${esc(truncate(l.title, 52))}</text>
-
-    <g transform="translate(0,124)">
-      <path d="M9 26 C9 26 17 19 17 11 A8 8 0 0 0 1 11 C1 19 9 26 9 26 Z" fill="#E9A23B"/>
-      <text x="30" y="24" font-family="Helvetica,Arial,sans-serif" font-size="22" fill="#E3EBF3">${esc(`${l.area}, ${l.city}`)}</text>
+    <g transform="translate(0,150)">
+      <path d="M10 30 C10 30 19 22 19 13 A9 9 0 0 0 1 13 C1 22 10 30 10 30 Z" fill="#E9A23B"/>
+      <text x="34" y="27" font-family="Helvetica,Arial,sans-serif" font-size="25" fill="#E3EBF3">${esc(`${l.area}, ${l.city}`)}</text>
     </g>
 
-    <text x="0" y="176" font-family="Helvetica,Arial,sans-serif" font-size="19" fill="#8EB3D2">${esc(tags)}</text>
+    <text x="0" y="222" font-family="Helvetica,Arial,sans-serif" font-size="21" fill="#8EB3D2">${esc(tags)}</text>
   </g>
 
-  <!-- marigold rule -->
-  <rect y="${H - 6}" width="${W}" height="6" fill="#E9A23B"/>
+  <text x="56" y="596" font-family="Helvetica,Arial,sans-serif" font-size="20" fill="#C1D5E7">skrealestate.com.np   ·   +977 985-1410559</text>
+  <rect y="${H - 8}" width="${W}" height="8" fill="#E9A23B"/>
 </svg>`);
 }
 
@@ -135,27 +134,49 @@ async function loadSeed() {
 
 async function main() {
   const listings = await loadSeed();
+  const logo = await sharp(readFileSync(LOGO)).resize({ width: 278, height: 86, fit: 'inside' }).toBuffer();
+  const lm = await sharp(logo).metadata();
+  const logoLayer = {
+    input: logo,
+    left: 832 + Math.round((326 - lm.width) / 2),
+    top: 40 + Math.round((118 - lm.height) / 2),
+  };
 
   for (const l of listings) {
-    const cover = l.photos[0]?.src ?? '/media/facade-1.svg';
-    const svgPath = resolve(ROOT, 'public', cover.replace(/^\//, ''));
-
-    // Rasterise the scene first; librsvg will not nest an SVG inside an SVG.
-    const base = await sharp(readFileSync(svgPath), { density: 150 })
-      .resize(W, H, { fit: 'cover', position: 'center' })
-      .png()
-      .toBuffer();
-
-    await sharp(base)
-      .composite([{ input: overlay(l), top: 0, left: 0 }])
-      .png({ quality: 90, compressionLevel: 9 })
+    await sharp(card(l))
+      .composite([logoLayer])
+      .png({ compressionLevel: 9, palette: true })
       .toFile(resolve(OUT, `${l.slug}.png`));
   }
 
-  // Site-wide fallback for the home page and any listing without a card.
-  await sharp(readFileSync(resolve(ROOT, 'public/media/og-default.svg')), { density: 150 })
-    .resize(W, H, { fit: 'cover' })
-    .png()
+  // Site-wide fallback for the home page and any page without its own card.
+  const home = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#10243F"/><stop offset="1" stop-color="#1D466C"/>
+    </linearGradient>
+    <radialGradient id="c" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#C62244" stop-opacity=".5"/><stop offset="1" stop-color="#C62244" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#E9A23B" stop-opacity=".38"/><stop offset="1" stop-color="#E9A23B" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="${W}" height="${H}" fill="url(#bg)"/>
+  <circle cx="1060" cy="110" r="300" fill="url(#c)"/>
+  <circle cx="140" cy="590" r="280" fill="url(#g)"/>
+  <rect x="56" y="56" width="360" height="130" rx="20" fill="#FFFFFF"/>
+  <text x="56" y="330" font-family="Georgia,serif" font-size="58" fill="#ffffff">Verified homes to rent</text>
+  <text x="56" y="398" font-family="Georgia,serif" font-size="58" fill="#ffffff">and buy — no broker fee.</text>
+  <text x="56" y="462" font-family="Helvetica,Arial,sans-serif" font-size="25" fill="#C1D5E7">Kathmandu · Lalitpur · Bhaktapur</text>
+  <text x="56" y="596" font-family="Helvetica,Arial,sans-serif" font-size="20" fill="#C1D5E7">skrealestate.com.np   ·   +977 985-1410559</text>
+  <rect y="${H - 8}" width="${W}" height="8" fill="#E9A23B"/>
+</svg>`);
+  const homeLogo = await sharp(readFileSync(LOGO)).resize({ width: 310, height: 98, fit: 'inside' }).toBuffer();
+  const hm = await sharp(homeLogo).metadata();
+  await sharp(home)
+    .composite([{ input: homeLogo, left: 56 + Math.round((360 - hm.width) / 2), top: 56 + Math.round((130 - hm.height) / 2) }])
+    .png({ compressionLevel: 9, palette: true })
     .toFile(resolve(OUT, 'default.png'));
 
   rmSync(TMP, { recursive: true, force: true });

@@ -2,14 +2,15 @@
   "name": "sk-real-estate",
   "private": true,
   "version": "1.0.0",
-  "description": "SK Real Estate Pvt. Ltd. — property rental & sale listings for Kathmandu Valley",
+  "description": "SK Real Estate Pvt. Ltd. \u2014 property rental & sale listings for Kathmandu Valley",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/gen-og.mjs && tsc -b && vite build && node scripts/prerender.mjs",
-    "gen:media": "node scripts/gen-media.mjs && node scripts/gen-og.mjs",
+    "build": "node scripts/gen-brand.mjs && node scripts/gen-og.mjs && tsc -b && vite build && node scripts/prerender.mjs",
+    "gen:media": "node scripts/gen-brand.mjs && node scripts/gen-og.mjs",
     "preview": "vite preview",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "gen:brand": "node scripts/gen-brand.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

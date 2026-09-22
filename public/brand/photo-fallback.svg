@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="Photo unavailable">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E7DFD6"/><stop offset="1" stop-color="#D6C8B9"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <g transform="translate(400,278)" fill="none" stroke="#806655" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity=".55">
+    <path d="M-92 26 L0 -52 L92 26"/>
+    <path d="M-62 22 V86 H62 V22"/>
+    <rect x="-20" y="42" width="40" height="44" rx="3"/>
+  </g>
+  <text x="400" y="424" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="23" fill="#806655" opacity=".75">Photo unavailable</text>
+</svg>

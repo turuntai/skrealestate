@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { displayStatus, statusToken } from '../lib/expiry';
 import { availabilityLabel, npr, nprShort, relativeTime } from '../lib/format';
@@ -9,6 +8,7 @@ import { FURNISHING, PROPERTY_TYPE, PURPOSE } from '../lib/taxonomy';
 import type { Listing } from '../lib/types';
 import { Icon } from './Icon';
 import { Badge, cx, useInView } from './ui';
+import { Photo } from './Photo';
 
 function bhkLabel(l: Listing): string | null {
   if (!l.bhk) return null;
@@ -55,7 +55,7 @@ export function ListingCard({ listing: l, layout = 'grid' }: { listing: Listing;
           )}
         >
           {seen && photo ? (
-            <img
+            <Photo
               src={photo.src}
               alt={photo.alt}
               loading="lazy"
@@ -202,16 +202,14 @@ export function ListingCardSkeleton() {
 
 /** Compact horizontal card used in the "similar properties" rail. */
 export function ListingMini({ listing: l }: { listing: Listing }) {
-  const [broken, setBroken] = useState(false);
   return (
     <Link to={listingPath(l)} className="flex gap-3 group p-2 -m-2 rounded-xl hover:bg-brick-100 transition-colors">
       <div className="w-24 h-20 rounded-lg overflow-hidden bg-brick-200 shrink-0">
-        {!broken && l.photos[0] && (
-          <img
+        {l.photos[0] && (
+          <Photo
             src={l.photos[0].src}
             alt={l.photos[0].alt}
             loading="lazy"
-            onError={() => setBroken(true)}
             className="w-full h-full object-cover"
           />
         )}
