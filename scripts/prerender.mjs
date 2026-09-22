@@ -19,8 +19,18 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = resolve(ROOT, 'dist');
 const TMP = resolve(ROOT, 'node_modules/.cache/sk-prerender');
 
-/** Change this to the real domain before going live. */
-const ORIGIN = process.env.SITE_ORIGIN?.replace(/\/$/, '') || 'https://skrealestate.com.np';
+/**
+ * Absolute origin baked into the prerendered tags. Crawlers need absolute URLs,
+ * so this has to be decided at build time:
+ *   1. SITE_ORIGIN, once the real domain is pointed at the site
+ *   2. Vercel's production domain, injected automatically during a build there
+ *   3. the intended domain, as a last resort for a local build
+ */
+const ORIGIN = (
+  process.env.SITE_ORIGIN ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL && `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`) ||
+  'https://skrealestate.com.np'
+).replace(/\/$/, '');
 
 const escapeHtml = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
