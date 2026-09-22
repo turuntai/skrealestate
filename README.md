@@ -74,6 +74,12 @@ verified and featured, and deletes.
 
 It also emits `sitemap.xml`, a `404.html` fallback and a `_redirects` file.
 
+Vercel's routing order is redirects → filesystem → rewrites, so the catch-all
+rewrite in `vercel.json` never shadows those prerendered files: a crawler asking
+for `/property/<slug>` gets the real file, and every other route falls through to
+the SPA shell. (`vercel.json` rejects unknown keys, so that note lives here
+rather than in the file.)
+
 ---
 
 ## Design

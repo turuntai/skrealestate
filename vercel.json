@@ -4,7 +4,6 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
 
-  "comment": "Routing order on Vercel is redirects -> filesystem -> rewrites. The prerendered per-listing files (dist/property/<slug>/index.html) are real files, so they win over the catch-all below and crawlers get the right share preview. Every other app route falls through to the SPA shell.",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
 
   "headers": [
