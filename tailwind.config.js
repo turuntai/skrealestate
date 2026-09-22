@@ -45,9 +45,14 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['"Segoe UI"', 'system-ui', '-apple-system', '"Helvetica Neue"', 'Arial', 'sans-serif'],
-        display: ['ui-serif', 'Georgia', 'Cambria', '"Times New Roman"', 'serif'],
-        ne: ['"Noto Sans Devanagari"', 'Mangal', 'Kalimati', 'system-ui', 'sans-serif'],
+        // Figtree is loaded from Google Fonts in index.html. The system stack
+        // behind it is what renders until the webfont arrives, and if it never
+        // does. `display` is kept as its own key so headings can be changed
+        // back to a serif without touching every component.
+        sans: ['Figtree', '"Segoe UI"', 'system-ui', '-apple-system', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+        display: ['Figtree', '"Segoe UI"', 'system-ui', '-apple-system', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+        // Figtree has no Devanagari glyphs, so Nepali copy needs its own stack.
+        ne: ['"Noto Sans Devanagari"', 'Mangal', 'Kalimati', 'Figtree', 'system-ui', 'sans-serif'],
         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       boxShadow: {

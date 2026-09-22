@@ -104,10 +104,17 @@ carrying a solid fill, a soft tint and a dot colour. A concept therefore looks
 identical on a card, a filter chip, the detail page and the admin table. No
 component hard-codes a colour for these.
 
+Type is **Figtree**, loaded from Google Fonts in `index.html` with
+`display=swap` — text paints immediately in the system stack behind it and
+reflows when the webfont lands, so a slow font never leaves the page blank.
+Nepali copy falls back to a Devanagari stack, since Figtree has no Devanagari
+glyphs. The share cards are rendered server-side by `sharp` and stay on
+Helvetica/Georgia; giving them Figtree means committing the font file and
+pointing the renderer at it.
+
 Other deliberate choices: a bilingual EN / नेपाली toggle; Nepali number
-formatting (`12,34,567`, lakh and crore); land in *aana* and *paisa*; no web
-fonts, so nothing blocks the first paint; and full keyboard and screen-reader
-support with focus trapping in every dialog.
+formatting (`12,34,567`, lakh and crore); land in *aana* and *paisa*; and full
+keyboard and screen-reader support with focus trapping in every dialog.
 
 Interaction patterns were drawn from how Zillow, Airbnb and Expedia solve the
 same problems — the gallery mosaic, the filter sheet, the sticky price card and
